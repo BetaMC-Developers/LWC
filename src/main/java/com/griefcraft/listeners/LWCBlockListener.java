@@ -168,6 +168,10 @@ public class LWCBlockListener extends BlockListener {
             return;
         }
 
+        if (!LWC.ENABLED) {
+            return;
+        }
+
         if (event.getBlock().getType() != Material.SAND && event.getBlock().getType() != Material.GRAVEL) {
             return;
         }
