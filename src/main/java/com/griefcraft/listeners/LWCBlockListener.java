@@ -93,6 +93,10 @@ public class LWCBlockListener extends BlockListener {
 
     @Override
     public void onSignChange(SignChangeEvent event) {
+        if (event.isCancelled()) {
+            return;
+        }
+
         if (!LWC.ENABLED) {
             return;
         }

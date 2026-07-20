@@ -5,7 +5,7 @@
     <artifactId>LWC</artifactId>
     <name>LWC</name>
     <packaging>jar</packaging>
-    <version>3.55</version>
+    <version>3.56</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
