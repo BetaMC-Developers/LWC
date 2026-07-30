@@ -1,6 +1,5 @@
 package com.griefcraft.listeners;
 
-import cb1060.RDEB;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
 import com.griefcraft.model.Protection;
@@ -169,53 +168,42 @@ public class LWCBlockListener extends BlockListener {
 
     @Override
     public void onBlockPhysics(BlockPhysicsEvent event) {
-        RDEB.up();
-        if (RDEB.shouldBreak()) {
+        if (event.isCancelled()) {
+            return;
+        }
+
+        if (!LWC.ENABLED) {
+            return;
+        }
+
+        if (event.getBlock().getType() != Material.SAND && event.getBlock().getType() != Material.GRAVEL) {
+            return;
+        }
+
+        LWC lwc = plugin.getLWC();
+        Block upNeighbor = event.getBlock().getRelative(BlockFace.UP);
+        if (attachmentsTopToCheck.contains(upNeighbor.getType()) && lwc.findProtection(upNeighbor) != null) {
             event.setCancelled(true);
 
             return;
         }
 
-        try {
-            if (event.isCancelled()) {
-                return;
-            }
+        List<BlockFace> horizontals = Arrays.asList(
+            BlockFace.NORTH,
+            BlockFace.EAST,
+            BlockFace.SOUTH,
+            BlockFace.WEST
+        );
+        for (BlockFace face: horizontals) {
+            Block neighbor = event.getBlock().getRelative(face);
+            if (neighbor.getState() != null && (neighbor.getState().getData() instanceof Attachable)) {
+                Attachable data = (Attachable) neighbor.getState().getData();
+                if (data.getAttachedFace() == face.getOppositeFace() && lwc.findProtection(neighbor) != null) {
+                    event.setCancelled(true);
 
-            if (!LWC.ENABLED) {
-                return;
-            }
-
-            if (event.getBlock().getType() != Material.SAND && event.getBlock().getType() != Material.GRAVEL) {
-                return;
-            }
-
-            LWC lwc = plugin.getLWC();
-            Block upNeighbor = event.getBlock().getRelative(BlockFace.UP);
-            if (attachmentsTopToCheck.contains(upNeighbor.getType()) && lwc.findProtection(upNeighbor) != null) {
-                event.setCancelled(true);
-
-                return;
-            }
-
-            List<BlockFace> horizontals = Arrays.asList(
-                BlockFace.NORTH,
-                BlockFace.EAST,
-                BlockFace.SOUTH,
-                BlockFace.WEST
-            );
-            for (BlockFace face: horizontals) {
-                Block neighbor = event.getBlock().getRelative(face);
-                if (neighbor.getState() != null && (neighbor.getState().getData() instanceof Attachable)) {
-                    Attachable data = (Attachable) neighbor.getState().getData();
-                    if (data.getAttachedFace() == face.getOppositeFace() && lwc.findProtection(neighbor) != null) {
-                        event.setCancelled(true);
-
-                        return;
-                    }
+                    return;
                 }
             }
-        } finally {
-            RDEB.down();
         }
     }
 
